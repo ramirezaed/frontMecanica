@@ -61,6 +61,7 @@ export async function loginFormulario(formData: FormData) {
     throw error;
   }
 }
+
 export async function Verificar(tokenC: string) {
   try {
     const response = await fetch(
