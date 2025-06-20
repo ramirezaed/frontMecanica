@@ -4,6 +4,7 @@ import { login } from '@/actions/authActions';
 import Google from 'next-auth/providers/google';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   session: {
     strategy: 'jwt',
     // maxAge: 30, //* 1, // 1 hora en segundos (60 segundos * 60 minutos)
