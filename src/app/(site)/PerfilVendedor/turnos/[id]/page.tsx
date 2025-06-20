@@ -115,7 +115,7 @@ export default function Page() {
         {/* Sección de precio */}
         <div className="flex justify-between items-center text-2xl font-semibold text-green-600 mt-8 border-t-2 pt-6">
           <span className="font-medium">Precio:</span>
-          <span>${turno.precio}</span>
+          <span>${turno.servicio.precio}</span>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

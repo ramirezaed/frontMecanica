@@ -27,7 +27,7 @@ export default function ColumnTurnos({ estado, turnos, color }: Props) {
             <p className="text-sm">
               🚗 {turno.tipo_vehiculo} - {turno.modelo}
             </p>
-            <p className="text-sm">💲 ${turno.precio}</p>
+            <p className="text-sm">💲 ${turno.servicio.precio}</p>
           </div>
         ))}
       </div>

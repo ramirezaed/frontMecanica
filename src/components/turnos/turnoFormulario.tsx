@@ -118,7 +118,7 @@ export const TurnoForm = ({
       const resultado = await crearNuevoTurno({
         ...turnoData,
         fecha: fechaFormateada,
-        servicio: selectedServicio._id,
+        servicioID: selectedServicio._id,
       });
 
       onSuccess({ ...resultado, ...turnoData, servicio: selectedServicio });
