@@ -211,7 +211,7 @@ export default async function Page({
                 <p className="text-gray-600 text-sm">Precio final</p>
               </div>
               <div className="text-2xl font-bold text-gray-800">
-                ${turno.precio}
+                {/* ${turno.precio} */}$ {turno.servicio.precio}
               </div>
             </div>
 

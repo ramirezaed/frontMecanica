@@ -105,11 +105,15 @@ export interface TurnoUsuario {
   tipo_vehiculo: string;
   modelo: string;
   matricula: string;
-  precio: number;
+  // precio: number;
   creado_el: string;
   estado_turno: string;
   fechaLocal: string;
   descripcion: string;
+  servicio: {
+    precio: string;
+    descripcion: string;
+  };
 }
 
 export interface Iservicio {

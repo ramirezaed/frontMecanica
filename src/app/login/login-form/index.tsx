@@ -122,7 +122,7 @@ export default function LoginFormulario() {
         {/* Botón iniciar sesión */}
         <button
           type="submit"
-          className="w-full bg-gray-900 text-white font-semibold text-sm py-2 mt-5 rounded-md hover:bg-gray-800 transition"
+          className="flex justify-center items-center w-full bg-gray-900 text-white font-semibold text-sm py-2 mt-5 rounded-md hover:bg-gray-800 transition"
           disabled={cargando}
         >
           {cargando ? (

@@ -57,7 +57,12 @@ export default function TableroTurnos({ turnos }: Props) {
                   <td className="px-4 py-2 text-sm">
                     {turno.tipo_vehiculo} - {turno.modelo}
                   </td>
-                  <td className="px-4 py-2 text-sm">${turno.precio}</td>
+                  <td className="px-4 py-2 text-sm">
+                    $
+                    {turno.servicio?.precio
+                      ? `$${turno.servicio.precio}`
+                      : 'N/A'}
+                  </td>
                   <td className="px-4 py-2">
                     <Link
                       // href={`/PerfilComprador/${session?.user.id}/turnos/${turno._id}`}

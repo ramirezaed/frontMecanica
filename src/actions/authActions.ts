@@ -438,7 +438,7 @@ export const crearNuevoTurno = async (turnoData: {
   email: string;
   tipo_vehiculo: string;
   modelo: string;
-  servicio: string;
+  servicioID: string;
   // precio: number;
 }) => {
   try {
