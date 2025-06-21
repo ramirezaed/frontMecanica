@@ -18,12 +18,26 @@ export const RegistroForm = ({
     fecha_nacimiento: '',
     email: '',
     contraseña: '',
+    confirmarContraseña: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [emailVerificado, setEmailVerificado] = useState(false);
   const [verificandoEmail, setVerificandoEmail] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  //verifiar que los dos input de contraseña sean iguales
+  useEffect(() => {
+    if (usuarioData.confirmarContraseña) {
+      if (usuarioData.contraseña !== usuarioData.confirmarContraseña) {
+        setConfirmPasswordError('Las contraseñas no coinciden');
+      } else {
+        setConfirmPasswordError('');
+      }
+    } else {
+      setConfirmPasswordError('');
+    }
+  }, [usuarioData.contraseña, usuarioData.confirmarContraseña]);
 
   // Verificación automática del email cuando cambia
   useEffect(() => {
@@ -228,12 +242,32 @@ export const RegistroForm = ({
             <p className="text-sm text-red-500 mt-1">{passwordError}</p>
           )}
         </div>
+
+        <div className="md:col-span-2">
+          <input
+            type="password"
+            name="confirmarContraseña"
+            value={usuarioData.confirmarContraseña}
+            onChange={handleChange}
+            placeholder="Repetir contraseña"
+            className="w-full p-3 border border-gray-300 rounded-xl bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-800 transition"
+            required
+          />
+        </div>
+        {confirmPasswordError && (
+          <p className="text-sm text-red-500 mt-1">{confirmPasswordError}</p>
+        )}
       </div>
 
       <div className="pt-4">
         <button
           type="submit"
-          disabled={loading || !emailVerificado || !!passwordError}
+          disabled={
+            loading ||
+            !emailVerificado ||
+            !!passwordError ||
+            !!confirmPasswordError
+          }
           className="w-full bg-gray-800 text-white p-3 rounded-xl font-semibold hover:bg-gray-700 disabled:bg-gray-400 transition-colors"
         >
           {loading ? 'Creando Cuenta...' : 'Crear Cuenta'}

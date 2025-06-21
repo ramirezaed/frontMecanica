@@ -482,7 +482,7 @@ export async function ListaTurnos() {
         Authorization: `Bearer ${session?.user.token}`,
       },
     });
-    if (!response) {
+    if (!response.ok) {
       throw new Error('error al mostrar tusnor');
     }
     return response.json();
