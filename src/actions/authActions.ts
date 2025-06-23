@@ -593,7 +593,7 @@ export async function CambiarEstadoTurno(id: string, estado_turno: string) {
 //////////////
 //////////////
 
-export async function crearServicio(nuevoServicio: {
+export async function agregarServicio(nuevoServicio: {
   nombre: string;
   precio: string;
   descripcion: string;
@@ -633,10 +633,15 @@ export async function ListaServicios() {
       {
         headers: {
           'Content-Type': 'application/json',
-          // Authorization: `Bearer ${session?.user.token}`,
+          Authorization: `Bearer ${session?.user.token}`,
         },
       }
     );
+    if (response.status === 401) {
+      throw new Error(
+        'No autorizado: tu sesión ha expirado o no tienes permisos'
+      );
+    }
     if (!response.ok) {
       throw new Error('Error al mostrar la lista de servicios');
     }
@@ -658,8 +663,14 @@ export async function ServiciosInactivos() {
         },
       }
     );
+    if (response.status === 401) {
+      throw new Error(
+        'No autorizado: tu sesión ha expirado o no tienes permisos'
+      );
+    }
+
     if (!response.ok) {
-      throw new Error('No se encontraron servicios activos o error');
+      throw new Error('No se encontraron servicios inactivos');
     }
     return await response.json();
   } catch (error) {

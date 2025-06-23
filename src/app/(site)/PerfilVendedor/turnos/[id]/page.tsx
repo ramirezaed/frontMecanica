@@ -4,16 +4,15 @@ import {
   fetchTurnos,
   editarTurno,
 } from '@/actions/authActions';
-import BotonAtras from '@/components/botones/botonAtras';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { TurnoUsuario } from '@/types';
 import { FiEdit2, FiSave, FiX } from 'react-icons/fi';
+import { IconLoading } from '@/assets/icons';
 
 export default function Page() {
   const params = useParams();
   const id = params.id as string;
-  // const turno = await fetchTurnos(id);
   const [cargando, setCargando] = useState(true);
   const [turno, setTurnos] = useState<TurnoUsuario | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -72,7 +71,14 @@ export default function Page() {
       console.error('Error al cambiar rol de usuario:', err);
     }
   };
-
+  if (cargando) {
+    return (
+      <div className="flex justify-center items-center mt-20 text-gray-500">
+        <IconLoading className="h-5 w-5 animate-spin" />
+        Buscando turno...
+      </div>
+    );
+  }
   if (!turno) {
     return (
       <div className="text-center text-red-500 text-lg mt-10">
@@ -152,8 +158,6 @@ export default function Page() {
             </div>
           </div>
           <div className="flex justify-between text-lg text-gray-700">
-            {/* <span className="font-medium">| Descripcion:</span>
-            <span>{turno.descripcion}</span> */}
             <div>
               <label
                 htmlFor="Descripcion"
@@ -171,30 +175,27 @@ export default function Page() {
               ></textarea>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => router.push(`/PerfilVendedor/turnos/`)}
-            className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors flex items-center gap-2"
-          >
-            <FiX /> Cancelar
-          </button>
-          <button
-            type="submit"
-            className="px-6 py-2.5 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
-          >
-            <FiSave /> Guardar Cambios
-          </button>
+          <div className="flex flex-col mt-1">
+            <button
+              type="button"
+              onClick={() => router.push(`/PerfilVendedor/turnos/`)}
+              className="flex-1 mt-1 px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors flex items-center gap-2"
+            >
+              <FiX /> Cancelar
+            </button>
+            <button
+              type="submit"
+              className="flex-1 mt-1 px-6 py-2.5 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+              <FiSave /> Guardar Cambios
+            </button>
+          </div>
         </form>
 
         {/* Detalle de creación */}
         <div className="mt-4 text-sm text-gray-500">
           <span className="font-semibold">Creado el:</span>{' '}
           {new Date(turno.creado_el).toLocaleString()}
-        </div>
-
-        {/* Enlace para regresar */}
-        <div className="mt-8 text-right">
-          <BotonAtras />
         </div>
       </div>
     </div>

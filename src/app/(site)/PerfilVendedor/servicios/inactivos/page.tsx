@@ -2,9 +2,24 @@ import { ServiciosInactivos } from '@/actions/authActions';
 import { Iservicio } from '@/types';
 import { Estados } from '@/components/etiquetas/estado';
 import Link from 'next/link';
+import { auth } from '@/auth';
 
 export default async function Page() {
   const servicios = await ServiciosInactivos();
+  const session = await auth();
+
+  if (!session || session.user?.rol_usuario !== 'vendedor') {
+    return (
+      <div className="flex flex-col items-center justify-center mt-32 px-6">
+        <h2 className="text-3xl font-bold text-red-600 mb-2">
+          Acceso denegado
+        </h2>
+        <p className="text-gray-600">
+          No tienes permiso para acceder a esta página.
+        </p>
+      </div>
+    );
+  }
 
   if (!servicios || servicios.length === 0) {
     return (

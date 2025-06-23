@@ -139,8 +139,7 @@ export default function Page() {
                 setFormData({ ...formData, descripcion: e.target.value })
               }
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-              rows={3}
-              required
+              rows={5}
             ></textarea>
           </div>
 
