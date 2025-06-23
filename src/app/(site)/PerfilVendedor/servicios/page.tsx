@@ -1,28 +1,42 @@
 'use client';
-import { ListaServicios, agregarServicio } from '@/actions/authActions';
+import {
+  ListaServicios,
+  agregarServicio,
+  editarServicio,
+} from '@/actions/authActions';
 import { Estados } from '@/components/etiquetas/estado';
 import { Iservicio } from '@/types';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import ModalAgregarServicio from '@/components/modales/agregarServicio';
-import Link from 'next/link';
+import ModalEditarServicio from '@/components/modales/editarServicio';
+import { IconLoading } from '@/assets/icons';
 
 export default function Page() {
   const [servicios, setServicios] = useState<Iservicio[]>([]);
   const [mostrarModal, setMostrarModal] = useState(false);
-  const { data: session } = useSession();
+  const [cargando, setCargando] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [idServicioEditar, setIdServicioEditar] = useState<string | null>(null);
+  const { data: session } = useSession();
 
-  // Función para cargar servicios
+  // Cargar servicios
   const cargarServicios = async () => {
-    const data = await ListaServicios();
-    setServicios(data);
+    try {
+      setCargando(true);
+      const data = await ListaServicios();
+      setServicios(data);
+    } catch (error) {
+    } finally {
+      setCargando(false);
+    }
   };
 
   useEffect(() => {
     cargarServicios();
   }, []);
 
+  // Agregar servicio
   const handleAgregarServicio = async (data: {
     nombre: string;
     descripcion: string;
@@ -41,6 +55,34 @@ export default function Page() {
     }
   };
 
+  // Editar servicio
+  const handleEditarServicio = async (
+    id: string,
+    data: { nombre: string; descripcion: string; precio: string }
+  ) => {
+    setLoading(true);
+    try {
+      await editarServicio(id, data);
+      await cargarServicios();
+      setIdServicioEditar(null); // Cierra el modal al guardar
+    } catch (error) {
+      console.error('Error al editar el servicio:', error);
+      alert('Ocurrió un error al editar el servicio');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (cargando) {
+    return (
+      <div className="flex justify-center items-center mt-20 text-gray-500">
+        <IconLoading className="h-5 w-5 animate-spin" />
+        Buscando Servicios...
+      </div>
+    );
+  }
+
+  // Control de acceso
   if (!session?.user.token || session.user?.rol_usuario !== 'vendedor') {
     return (
       <div className="flex flex-col items-center justify-center mt-32 px-6">
@@ -76,10 +118,6 @@ export default function Page() {
               <h1 className="flex justify-center text-xl font-bold text-gray-800">
                 Servicios
               </h1>
-              <p className="text-sm text-gray-500">
-                {servicios.length} servicio{servicios.length !== 1 && 's'}{' '}
-                registrado{servicios.length !== 1 && 's'}
-              </p>
             </div>
             <button
               onClick={() => setMostrarModal(true)}
@@ -93,19 +131,19 @@ export default function Page() {
             <table className="min-w-full divide-y divide-gray-200 bg-white">
               <thead className="bg-gray-50">
                 <tr className="bg-gray-800">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-50 uppercase tracking-wide">
                     Nombre
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-50 uppercase tracking-wide">
                     Descripción
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-50 uppercase tracking-wide">
                     Precio
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-50 uppercase tracking-wide">
                     Estado
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-50 uppercase tracking-wide">
                     Acción
                   </th>
                 </tr>
@@ -126,11 +164,12 @@ export default function Page() {
                       <Estados estado={servicio.estado} />
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <Link href={`/PerfilVendedor/servicios/${servicio._id}`}>
-                        <span className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                          Editar
-                        </span>
-                      </Link>
+                      <button
+                        onClick={() => setIdServicioEditar(servicio._id)}
+                        className="inline-flex items-center rounded-full bg-gray-700 px-3 py-1 text-sm font-medium text-white shadow-sm hover:bg-gray-600 transition"
+                      >
+                        Editar
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -144,6 +183,15 @@ export default function Page() {
         <ModalAgregarServicio
           onClose={() => setMostrarModal(false)}
           onGuardar={handleAgregarServicio}
+          loading={loading}
+        />
+      )}
+
+      {idServicioEditar && (
+        <ModalEditarServicio
+          id={idServicioEditar}
+          onClose={() => setIdServicioEditar(null)}
+          onGuardar={handleEditarServicio}
           loading={loading}
         />
       )}

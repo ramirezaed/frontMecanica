@@ -1,18 +1,24 @@
 'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiX, FiSave } from 'react-icons/fi';
+import { buscarServicioPorId } from '@/actions/authActions';
 
 interface ModalEditarServicioProps {
+  id: string;
   onClose: () => void;
-  onGuardar: (data: {
-    nombre: string;
-    descripcion: string;
-    precio: string;
-  }) => void;
+  onGuardar: (
+    id: string,
+    data: {
+      nombre: string;
+      descripcion: string;
+      precio: string;
+    }
+  ) => void;
   loading: boolean;
 }
-export default function ModalAgregarServicio({
+
+export default function ModalEditarServicio({
+  id,
   onClose,
   onGuardar,
   loading,
@@ -22,6 +28,28 @@ export default function ModalAgregarServicio({
     descripcion: '',
     precio: '',
   });
+  const [cargandoDatos, setCargandoDatos] = useState(true);
+
+  useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        setCargandoDatos(true);
+        const servicio = await buscarServicioPorId(id);
+        if (servicio) {
+          setServicioData({
+            nombre: servicio.nombre || '',
+            descripcion: servicio.descripcion || '',
+            precio: servicio.precio ? servicio.precio.toString() : '',
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar servicio:', error);
+      } finally {
+        setCargandoDatos(false);
+      }
+    };
+    cargarDatos();
+  }, [id]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -35,14 +63,23 @@ export default function ModalAgregarServicio({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onGuardar(servicioData);
+    onGuardar(id, servicioData);
   };
+
+  if (cargandoDatos) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow">
+          <p className="text-center">Cargando datos del servicio...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="w-full max-w-[500px] mx-auto bg-white p-6 rounded-lg shadow border border-black">
-        <h1 className="text-xl font-bold text-black py-2">
-          Agregar nuevo servicio
-        </h1>
+        <h1 className="text-xl font-bold text-black py-2">Editar servicio</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -104,7 +141,7 @@ export default function ModalAgregarServicio({
               className="flex-1 w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-gray-800 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 disabled:opacity-50"
             >
               <FiSave className="h-4 w-4" />
-              {loading ? 'Guardando...' : 'Agregar servicio'}
+              {loading ? 'Guardando...' : 'Guardar cambios'}
             </button>
           </div>
         </form>

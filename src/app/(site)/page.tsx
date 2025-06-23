@@ -5,7 +5,6 @@ import ServiciosSeccion from '@/components/homePage/servicios';
 import Encontranos from '@/components/homePage/Encontranos';
 import CTA from '@/components/homePage/cta';
 import Porque from '@/components/homePage/porqueNosotros';
-//
 
 export default async function Home() {
   const session = await auth();

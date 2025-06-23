@@ -15,7 +15,6 @@ export default async function Page() {
       </div>
     );
   }
-  console.log('probando tunos', turnos);
   return (
     <div className="">
       <TablaTurnos params={turnos} />
